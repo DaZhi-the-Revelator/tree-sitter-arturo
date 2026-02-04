@@ -43,7 +43,7 @@
 (dictionary
   key: (label) @property)
 
-; Operators
+; Operators - only those that exist in the grammar
 [
   "+"
   "-"
@@ -77,24 +77,21 @@
   "<=>"
 ] @operator
 
-; Delimiters
+; Delimiters - brackets and braces
 [
   "["
   "]"
   "{"
   "}"
-  "("
-  ")"
+  "#["
 ] @punctuation.bracket
 
 [
   ":"
   "."
-  ";"
 ] @punctuation.delimiter
 
 ; Special symbols
 [
   "'"
-  "`"
 ] @punctuation.special
