@@ -16,7 +16,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.function_call, $.identifier],
+    [$.function_call, $._expression],
   ],
 
   rules: {
@@ -27,8 +27,6 @@ module.exports = grammar({
       $.comment,
       $.assignment,
       $.function_call,
-      $.block,
-      $.dictionary,
       $._expression,
     ),
 
@@ -45,7 +43,7 @@ module.exports = grammar({
     )),
 
     // Labels: identifier followed by colon (for assignment or dictionary keys)
-    label: $ => /[\w_]+\b\??:/,
+    label: $ => /[\w_]+\??:/,
 
     // Blocks: [...]
     block: $ => seq(
@@ -65,10 +63,10 @@ module.exports = grammar({
     ),
 
     // Function calls
-    function_call: $ => prec.left(seq(
+    function_call: $ => prec.dynamic(1, prec.left(seq(
       field('function', choice($.builtin, $.identifier)),
       repeat1(field('argument', $._expression))
-    )),
+    ))),
 
     _expression: $ => choice(
       $.number,
@@ -134,13 +132,13 @@ module.exports = grammar({
     ),
 
     // Literals: 'word
-    literal: $ => seq("'", /[\w_]+\b\??:?/),
+    literal: $ => seq("'", /[\w_]+\??:?/),
 
     // Type annotations: :type
     type_annotation: $ => seq(':', /[\w_]+/),
 
     // Attributes: .attribute
-    attribute: $ => seq('.', /[\w_]+\b\??:?/),
+    attribute: $ => seq('.', /[\w_]+\??:?/),
 
     // Numbers (integers and floats)
     number: $ => {
@@ -167,8 +165,8 @@ module.exports = grammar({
       // Embedded code blocks
       $.code_block,
       
-      // Smart strings
-      seq('«', /[^\n]*/, '$'),
+      // Smart strings (ending with newline)
+      seq('«', /[^\n]*/),
       
       // Regex strings
       seq('{/', repeat(/[^\/]/), '/}'),
@@ -284,6 +282,6 @@ module.exports = grammar({
     ),
 
     // Identifiers
-    identifier: $ => /[\w_]+\b\??/,
+    identifier: $ => /[\w_]+\??/,
   }
 });

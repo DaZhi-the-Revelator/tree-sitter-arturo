@@ -2,7 +2,3 @@ build/
 node_modules/
 target/
 *.log
-src/parser.c
-src/tree_sitter/
-src/node-types.json
-src/grammar.json
