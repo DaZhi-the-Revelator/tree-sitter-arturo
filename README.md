@@ -47,7 +47,7 @@ Add to your Neovim configuration:
 local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 parser_config.arturo = {
   install_info = {
-    url = "https://github.com/yourusername/tree-sitter-arturo",
+    url = "https://github.com/DaZhi-the-Revelator/tree-sitter-arturo",
     files = {"src/parser.c"},
     branch = "main",
   },
@@ -57,12 +57,12 @@ parser_config.arturo = {
 
 #### Zed
 
-This grammar is used by the [Zed Arturo extension](https://github.com/yourusername/zed-arturo).
+This grammar is used by the [Zed Arturo extension](https://github.com/DaZhi-the-Revelator/tree-sitter-arturo).
 
 ### For Development
 
 ```bash
-git clone https://github.com/yourusername/tree-sitter-arturo
+git clone https://github.com/DaZhi-the-Revelator/tree-sitter-arturo
 cd tree-sitter-arturo
 npm install --ignore-scripts
 npx tree-sitter generate
@@ -172,4 +172,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Related Projects
 
 - [Arturo](https://github.com/arturo-lang/arturo) - The Arturo programming language
-- [Zed Arturo Extension](https://github.com/yourusername/zed-arturo) - Arturo support for Zed editor
+- [Zed Arturo Extension](https://github.com/DaZhi-the-Revelator/tree-sitter-arturo) - Arturo support for Zed editor
