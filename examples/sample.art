@@ -1,0 +1,56 @@
+#!/usr/bin/env arturo
+
+; This is a sample Arturo program demonstrating various features
+
+; Variables and assignments
+name: "Alice"
+age: 30
+isActive: true
+
+; Arrays/Blocks
+numbers: [1 2 3 4 5]
+fruits: ["apple" "banana" "orange"]
+
+; Dictionaries
+person: #[
+    name: "Bob"
+    age: 25
+    city: "New York"
+]
+
+; Functions and loops
+loop 1..10 'x [
+    print ["Number:" x]
+]
+
+; Conditional logic
+if age > 18 [
+    print "Adult"
+] else [
+    print "Minor"
+]
+
+; String operations
+greeting: "Hello, " ++ name ++ "!"
+print greeting
+
+; Mathematical operations
+result: 10 + 20 * 3
+squared: result ^ 2
+
+; Type annotations and literals
+myType: :string
+myLiteral: 'word
+myAttr: .attribute
+
+; Different string types
+regular: "Regular string"
+curly: {Curly brace string}
+verbatim: {:No escape sequences\n:}
+safe: ««Safe string»»
+
+; Built-in functions
+upper name
+lower greeting
+size numbers
+print ["Sum:" sum numbers]

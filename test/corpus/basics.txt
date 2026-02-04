@@ -1,0 +1,191 @@
+================================================================================
+Basic print statement
+================================================================================
+
+print "Hello, World!"
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_call
+    function: (builtin)
+    argument: (string)))
+
+================================================================================
+Comments
+================================================================================
+
+; This is a comment
+print "test" ; another comment
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (function_call
+    function: (builtin)
+    argument: (string))
+  (comment))
+
+================================================================================
+Assignment
+================================================================================
+
+name: "John"
+age: 30
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (string))
+  (assignment
+    name: (label)
+    value: (number)))
+
+================================================================================
+Blocks and arrays
+================================================================================
+
+numbers: [1 2 3 4 5]
+loop numbers 'x [
+    print x
+]
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (block
+      (number)
+      (number)
+      (number)
+      (number)
+      (number)))
+  (function_call
+    function: (builtin)
+    argument: (identifier)
+    argument: (literal)
+    argument: (block
+      (function_call
+        function: (builtin)
+        argument: (identifier)))))
+
+================================================================================
+Dictionary
+================================================================================
+
+person: #[
+    name: "John"
+    age: 30
+    city: "New York"
+]
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (dictionary
+      key: (label)
+      value: (string)
+      key: (label)
+      value: (number)
+      key: (label)
+      value: (string))))
+
+================================================================================
+Functions and operations
+================================================================================
+
+result: 10 + 20 * 3
+squared: result ^ 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (binary_expression
+      (number)
+      (binary_expression
+        (number)
+        (number))))
+  (assignment
+    name: (label)
+    value: (binary_expression
+      (identifier)
+      (number))))
+
+================================================================================
+Booleans and null
+================================================================================
+
+isTrue: true
+isFalse: false
+isMaybe: maybe
+nothing: null
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (boolean))
+  (assignment
+    name: (label)
+    value: (boolean))
+  (assignment
+    name: (label)
+    value: (boolean))
+  (assignment
+    name: (label)
+    value: (null)))
+
+================================================================================
+String variations
+================================================================================
+
+regular: "Hello"
+curly: {World}
+verbatim: {:No\nEscape:}
+safe: ««Safe String»»
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (string))
+  (assignment
+    name: (label)
+    value: (string))
+  (assignment
+    name: (label)
+    value: (string))
+  (assignment
+    name: (label)
+    value: (string)))
+
+================================================================================
+Literals and type annotations
+================================================================================
+
+myLiteral: 'word
+myType: :integer
+myAttr: .attribute
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (assignment
+    name: (label)
+    value: (literal))
+  (assignment
+    name: (label)
+    value: (type_annotation))
+  (assignment
+    name: (label)
+    value: (attribute)))
