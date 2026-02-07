@@ -33,7 +33,7 @@ module.exports = grammar({
     // Shebang at the beginning of file
     shebang: $ => /#!.*/,
 
-    // Comments: ; this is a comment
+    // Single-line comments: ; this is a comment
     comment: $ => /;[^\n]*/,
 
     // Assignment: name: value
@@ -159,7 +159,7 @@ module.exports = grammar({
       // Curly strings (verbatim)
       seq('{:', repeat(/[^:]/), ':}'),
       
-      // Curly strings (normal)
+      // Curly strings (normal) - often used as "multi-line comments"
       seq('{', repeat(choice(/[^{}\\]/, /\\./)), '}'),
       
       // Embedded code blocks
