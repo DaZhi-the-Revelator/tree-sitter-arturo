@@ -1,175 +1,292 @@
 # tree-sitter-arturo
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Tree-sitter grammar for the [Arturo programming language](https://arturo-lang.io/).
 
-## About
-
-This is a Tree-sitter parser for Arturo, a simple, expressive, and portable programming language for efficient scripting. This grammar enables syntax highlighting and other language features in editors that support Tree-sitter.
+This grammar provides syntax parsing for Arturo, enabling features like syntax highlighting, code folding, and structural navigation in editors that support Tree-sitter.
 
 ## Features
 
-### Supported Syntax
-
-- ✅ **Comments** - Line comments with `;`
-- ✅ **Strings** - Multiple string types:
-  - Regular strings: `"text"`
-  - Curly strings: `{text}`
-  - Verbatim strings: `{:text:}`
-  - Safe strings: `««text»»`
-  - Smart strings: `«text`
-  - Regex strings: `{/pattern/}`
-- ✅ **Numbers** - Integers, floats, and scientific notation
-- ✅ **Booleans** - `true`, `false`, `maybe`
-- ✅ **Blocks** - `[...]` syntax
-- ✅ **Dictionaries** - `#[key: value]` syntax
-- ✅ **400+ Built-in Functions** - All Arturo built-ins and predicates
-- ✅ **Operators** - Arithmetic, logical, comparison, and special operators
-- ✅ **Literals** - `'word` syntax
-- ✅ **Type Annotations** - `:type` syntax
-- ✅ **Attributes** - `.attribute` syntax
-- ✅ **Embedded Code** - Support for `{!html:...}`, `{!css:...}`, etc.
-- ✅ **Function Calls** - Full support for Arturo's function syntax
-- ✅ **Assignments** - `name: value` syntax
+- ✅ Complete Arturo syntax support
+- ✅ Proper comment handling (single-line `;` only)
+- ✅ Multi-line block support
+- ✅ All built-in functions recognized as predicates
+- ✅ String literal variations (regular, safe, curly, verbatim)
+- ✅ Code blocks with embedded languages
+- ✅ Type annotations and literals
+- ✅ Dictionary and block syntax
+- ✅ Binary, unary, and special operators
 
 ## Installation
 
-### For Editor Integration
+### As a dependency (for editor extensions)
 
-This grammar is designed to work with Tree-sitter-compatible editors.
-
-#### Neovim
-
-Add to your Neovim configuration:
-
-```lua
-local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-parser_config.arturo = {
-  install_info = {
-    url = "https://github.com/DaZhi-the-Revelator/tree-sitter-arturo",
-    files = {"src/parser.c"},
-    branch = "main",
-  },
-  filetype = "art",
+```json
+{
+  "dependencies": {
+    "tree-sitter-arturo": "github:YOUR_USERNAME/tree-sitter-arturo"
+  }
 }
 ```
 
-#### Zed
-
-This grammar is used by the [Zed Arturo extension](https://github.com/DaZhi-the-Revelator/tree-sitter-arturo).
-
-### For Development
+### For development
 
 ```bash
-git clone https://github.com/DaZhi-the-Revelator/tree-sitter-arturo
+git clone https://github.com/YOUR_USERNAME/tree-sitter-arturo
 cd tree-sitter-arturo
-npm install --ignore-scripts
-npx tree-sitter generate
-npx tree-sitter test
+npm install
+npm run generate
+npm test
 ```
 
-## Usage Examples
+## Usage
 
-### Basic Arturo Code
+### With Node.js
 
+```javascript
+const Parser = require('tree-sitter');
+const Arturo = require('tree-sitter-arturo');
+
+const parser = new Parser();
+parser.setLanguage(Arturo);
+
+const sourceCode = `
+; This is a comment
+name: "Arturo"
+print name
+`;
+
+const tree = parser.parse(sourceCode);
+console.log(tree.rootNode.toString());
+```
+
+### With Zed Editor
+
+This grammar is used by the [zed-arturo](https://github.com/YOUR_USERNAME/zed-arturo) extension.
+
+## Arturo Language Syntax
+
+### Comments
+
+**Single-line comments only**:
 ```arturo
 ; This is a comment
-name: "Alice"
+```
+
+**Note**: Arturo doesn't have dedicated multi-line comment delimiters. Developers use unassigned string literals as a workaround:
+
+```arturo
+{
+This is technically a string literal,
+but used as a multi-line "comment"
+}
+
+{:
+This preserves exact formatting
+   including indentation
+:}
+```
+
+These are parsed as strings, not comments, which is correct behavior.
+
+### Basic Syntax
+
+```arturo
+; Variables
+name: "John"
 age: 30
 
-; Blocks
-numbers: [1 2 3 4 5]
+; Blocks (can span multiple lines)
+numbers: [
+    1 2 3
+    4 5 6
+]
 
 ; Dictionaries
 person: #[
-    name: "Bob"
-    age: 25
+    name: "John"
+    age: 30
 ]
 
-; Function calls
-print "Hello, World!"
-loop numbers 'x [
-    print x
+; Functions
+greet: function [name][
+    print ["Hello" name]
 ]
 
-; Conditionals
+; Control flow
 if age > 18 [
     print "Adult"
 ]
+
+loop numbers 'x [
+    print x
+]
 ```
 
-### String Variations
+### Supported Token Types
 
-```arturo
-regular: "Regular string with escapes\n"
-curly: {Curly brace string}
-verbatim: {:Raw string with no \n escapes:}
-safe: ««Safe string with »» inside»»
+- **Comments**: Single-line (`;`)
+- **Numbers**: Integers, floats, scientific notation
+- **Strings**: Multiple formats
+  - Regular: `"string"`
+  - Safe: `««string»»`
+  - Curly verbatim: `{:string:}`
+  - Curly normal: `{string}`
+  - Smart: `«string`
+  - Regex: `{/pattern/}`
+- **Characters**: `` `c` ``
+- **Booleans**: `true`, `false`, `maybe`
+- **Null**: `null`
+- **Literals**: `'symbol`
+- **Type annotations**: `:type`
+- **Attributes**: `.attribute`
+- **Blocks**: `[...]`
+- **Dictionaries**: `#[...]`
+- **Built-in functions**: 521+ recognized
+
+## Grammar Rules
+
+### Statements
+
+The grammar recognizes these statement types:
+- Shebang (`#!/usr/bin/env arturo`)
+- Comments (`;`)
+- Assignments (`name: value`)
+- Function calls (`print "hello"`)
+- Expressions
+
+### Expressions
+
+All Arturo expression types are supported:
+- Numbers (integer, float, scientific)
+- Strings (all variants)
+- Characters
+- Booleans and null
+- Blocks and dictionaries
+- Function calls
+- Binary expressions (arithmetic, comparison, logical)
+- Unary expressions (!, ~, \, @, #, $, ?)
+- Literals and type annotations
+
+### Operators
+
+**Arithmetic**: `+`, `-`, `*`, `/`, `%`, `^`
+
+**Comparison**: `=`, `<`, `>`, `<=>`
+
+**Logical**: `&`, `|`
+
+**Range**: `..`, `...`
+
+**Special**: `->`, `=>`, `==>`, `<===>`, `-->`, `<-->`, `<->`, `::`
+
+**Unary**: `!`, `!!`, `~`, `\`, `@`, `#`, `$`, `?`
+
+## Testing
+
+Tests are in `test/corpus/basics.txt`:
+
+```bash
+npm test
 ```
 
-### Built-in Functions
+## Building
 
-```arturo
-; All 400+ Arturo built-ins are recognized
-print "text"
-upper name
-loop 1..10 'x [print x]
-if true? value [do something]
+Generate the parser from grammar.js:
+
+```bash
+npm run generate
 ```
+
+Build the native module:
+
+```bash
+npm run build
+```
+
+## Integration
+
+### Syntax Highlighting
+
+Highlighting queries are in `queries/highlights.scm`:
+
+```scheme
+(comment) @comment
+(builtin) @function.builtin
+(number) @number
+(string) @string
+; ... and more
+```
+
+### Language Server
+
+See [zed-arturo](https://github.com/YOUR_USERNAME/zed-arturo) for the full LSP implementation.
 
 ## Development
 
-### Grammar Structure
+### Project Structure
 
-- `grammar.js` - The main Tree-sitter grammar definition
-- `queries/highlights.scm` - Syntax highlighting queries
-- `src/parser.c` - Generated parser (created by `tree-sitter generate`)
-- `test/corpus/` - Test cases
-
-### Building
-
-```bash
-# Generate the parser
-npx tree-sitter generate
-
-# Run tests
-npx tree-sitter test
-
-# Parse a file
-npx tree-sitter parse examples/sample.art
-
-# Test highlighting
-npx tree-sitter highlight examples/sample.art
+```
+tree-sitter-arturo/
+├── grammar.js              # Grammar definition
+├── src/
+│   ├── parser.c           # Generated parser (don't edit)
+│   ├── grammar.json       # Generated grammar data
+│   └── node-types.json    # Generated node types
+├── queries/
+│   └── highlights.scm     # Syntax highlighting queries
+├── test/
+│   └── corpus/
+│       └── basics.txt     # Test cases
+└── bindings/              # Language bindings
+    ├── node/
+    └── rust/
 ```
 
-### Contributing
+### Making Changes
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Edit `grammar.js`
+2. Run `npm run generate` to regenerate the parser
+3. Run `npm test` to verify tests pass
+4. Commit changes
+
+### Important Notes
+
+- **Comments**: Arturo only has single-line comments (`;`)
+- **Strings vs Comments**: `{...}` blocks are strings, not comments
+- **Bracket Matching**: Blocks can span multiple lines
+- **Built-ins**: All 521+ functions are recognized in the grammar
+
+## Contributing
+
+Contributions welcome! Please:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Run `npm test`
+6. Submit a pull request
 
 ## Resources
 
-- [Arturo Language Website](https://arturo-lang.io/)
+- [Arturo Language](https://arturo-lang.io/)
 - [Arturo Documentation](https://arturo-lang.io/documentation/)
-- [Arturo GitHub Repository](https://github.com/arturo-lang/arturo)
-- [Tree-sitter Documentation](https://tree-sitter.github.io/tree-sitter/)
-- [Arturo VSCode Extension](https://github.com/arturo-lang/vscode-extension) (TextMate grammar reference)
-
-## Credits
-
-This grammar was converted from the [Arturo VSCode extension](https://github.com/arturo-lang/vscode-extension)'s TextMate grammar.
+- [Tree-sitter](https://tree-sitter.github.io/)
+- [Tree-sitter Grammar Guide](https://tree-sitter.github.io/tree-sitter/creating-parsers)
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details
 
-## Related Projects
+## Changelog
 
-- [Arturo](https://github.com/arturo-lang/arturo) - The Arturo programming language
-- [Zed Arturo Extension](https://github.com/DaZhi-the-Revelator/tree-sitter-arturo) - Arturo support for Zed editor
+### v1.0.0 (Current)
+- ✅ Complete Arturo syntax support
+- ✅ Corrected comment handling (single-line only)
+- ✅ Multi-line block support
+- ✅ All built-in functions recognized
+- ✅ String literal variations
+- ✅ Code block embeddings
+
+### v0.1.0
+- Initial grammar implementation
