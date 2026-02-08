@@ -2,6 +2,8 @@
  * @file Tree-sitter grammar for Arturo programming language
  * @author Arturo Community
  * @license MIT
+ * 
+ * OPTIMIZED VERSION - Simplified to reduce memory usage during compilation
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
@@ -43,7 +45,8 @@ module.exports = grammar({
     )),
 
     // Labels: identifier followed by colon (for assignment or dictionary keys)
-    label: $ => /[\w_]+\??:/,
+    // Supports ? at end: name?: value
+    label: $ => /[a-zA-Z_][\w-]*\??:/,
 
     // Blocks: [...]
     block: $ => seq(
@@ -90,39 +93,20 @@ module.exports = grammar({
       $.unary_expression,
     ),
 
-    // Binary expressions
-    binary_expression: $ => choice(
-      // Arithmetic
-      prec.right(1, seq($._expression, '+', $._expression)),
-      prec.right(1, seq($._expression, '-', $._expression)),
-      prec.right(2, seq($._expression, '*', $._expression)),
-      prec.right(2, seq($._expression, '/', $._expression)),
-      prec.right(2, seq($._expression, '%', $._expression)),
-      prec.right(3, seq($._expression, '^', $._expression)),
-      
-      // Comparison
-      prec.left(0, seq($._expression, '=', $._expression)),
-      prec.left(0, seq($._expression, '<', $._expression)),
-      prec.left(0, seq($._expression, '>', $._expression)),
-      prec.left(0, seq($._expression, '<=>', $._expression)),
-      
-      // Logical
-      prec.left(0, seq($._expression, '&', $._expression)),
-      prec.left(0, seq($._expression, '|', $._expression)),
-      
-      // Range
-      prec.left(0, seq($._expression, choice('..', '...'), $._expression)),
-      
-      // Special operators
-      prec.right(0, seq($._expression, '->', $._expression)),
-      prec.right(0, seq($._expression, '=>', $._expression)),
-      prec.right(0, seq($._expression, '==>', $._expression)),
-      prec.right(0, seq($._expression, '<==>', $._expression)),
-      prec.right(0, seq($._expression, '-->', $._expression)),
-      prec.right(0, seq($._expression, '<-->', $._expression)),
-      prec.right(0, seq($._expression, '<->', $._expression)),
-      prec.right(0, seq($._expression, '::', $._expression)),
-    ),
+    // Binary expressions (simplified to reduce complexity)
+    binary_expression: $ => {
+      const ops = [
+        ['+', 1], ['-', 1], ['*', 2], ['/', 2], ['%', 2], ['^', 3],
+        ['=', 0], ['<', 0], ['>', 0], ['<=>', 0],
+        ['&', 0], ['|', 0],
+        ['..', 0], ['...', 0],
+        ['->', 0], ['=>', 0], ['==>', 0], ['<==>', 0], ['-->', 0],
+        ['<-->', 0], ['<->', 0], ['::', 0],
+      ];
+      return choice(...ops.map(([op, precedence]) =>
+        prec.right(precedence, seq($._expression, op, $._expression))
+      ));
+    },
 
     // Unary expressions
     unary_expression: $ => choice(
@@ -134,48 +118,44 @@ module.exports = grammar({
       prec(4, seq('#', $._expression)),
       prec(4, seq('$', $._expression)),
       prec(4, seq('?', $._expression)),
-      prec(4, seq('`', $._expression)),  // Unit prefix
+      prec(4, seq('`', $._expression)),
     ),
 
-    // Literals: 'word
-    literal: $ => seq("'", /[\w_]+\??:?/),
+    // Literals: 'word or 'word?
+    literal: $ => seq("'", /[a-zA-Z_][\w-]*\??:?/),
 
     // Type annotations: :type
-    type_annotation: $ => seq(':', /[\w_]+/),
+    type_annotation: $ => seq(':', /[a-zA-Z_][\w-]*/),
 
-    // Attributes: .attribute
-    attribute: $ => seq('.', /[\w_]+\??:?/),
+    // Attributes: .attribute or .attribute?
+    attribute: $ => seq('.', /[a-zA-Z_][\w-]*\??:?/),
 
-    // Colors: #red or #0077BF
+    // Colors: #red or #0077BF or #ABC
     color: $ => seq(
       '#',
-      choice(
-        // Named colors
-        token.immediate(choice(
-          'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black',
-          'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'lime', 'navy',
-          'teal', 'aqua', 'maroon', 'olive', 'silver', 'fuchsia'
-        )),
-        // Hex colors (6 digits)
-        token.immediate(/[0-9a-fA-F]{6}/),
-        // Hex colors (3 digits)
-        token.immediate(/[0-9a-fA-F]{3}/)
-      )
+      token.immediate(choice(
+        // Hex colors
+        /[0-9a-fA-F]{6}/,
+        /[0-9a-fA-F]{3}/,
+        // Named colors (simplified list)
+        'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black',
+        'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'lime', 'navy',
+        'teal', 'aqua', 'maroon', 'olive', 'silver', 'fuchsia'
+      ))
     ),
 
     // Units: `m, `kg, etc.
-    unit: $ => seq('`', token.immediate(/[a-zA-Z_][a-zA-Z0-9_]*/)),
+    unit: $ => seq('`', token.immediate(/[a-zA-Z_][\w]*/)),
 
-    // Version literals: 1.2.3 or 1.2.3-beta
-    version: $ => /\d+(\.\d+)*(-[a-zA-Z][a-zA-Z0-9]*)?/,
+    // Version literals: 1.2.3 or 1.2.3-beta or 10-beta
+    version: $ => /\d+(\.\d+)*(-[a-zA-Z][\w]*)?/,
 
-    // Numbers (integers and floats)
-    number: $ => {
-      const decimal = /[0-9]+/;
-      const float = /[0-9]+\.[0-9]+/;
-      const scientific = /[0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+/;
-      return token(choice(scientific, float, decimal));
-    },
+    // Numbers (integers, floats, scientific)
+    number: $ => token(choice(
+      /\d+(\.\d+)?[eE][+-]?\d+/,  // scientific
+      /\d+\.\d+/,                  // float
+      /\d+/                        // integer
+    )),
 
     // Interpolated strings: ~"text |var| more text"
     interpolated_string: $ => seq(
@@ -191,81 +171,53 @@ module.exports = grammar({
     // String interpolation: |variable|
     interpolation: $ => seq(
       '|',
-      $.identifier,
+      /[a-zA-Z_][\w-]*\??/,
       '|'
     ),
 
-    // Template strings with delimiters: <|| ... ||>
+    // Template strings: <|| ... ||>
     template_string: $ => seq(
       '<||',
-      repeat(choice(
-        /[^|]/,
-        seq('|', /[^|]/)
-      )),
+      repeat(/[^|]+|\|[^|]/),
       '||>'
     ),
 
-    // Strings: "..." or {...} or {:...:} or ««...»»
+    // Strings: "...", {...}, {:...:}, ««...»», etc.
     string: $ => choice(
-      // Regular strings with escape sequences
-      seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
+      // Regular double-quoted strings
+      seq('"', repeat(choice(/[^"\\]+/, /\\./)), '"'),
       
       // Safe strings (double guillemets)
-      seq('««', repeat(choice(/[^»]/, seq('»', /[^»]/))), '»»'),
+      seq('««', repeat(/[^»]+/), '»»'),
       
-      // Verbatim multiline strings (indentation-preserved)
-      seq('{:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      // Verbatim multiline strings
+      seq('{:', repeat(/[^:]+|:[^}]/), ':}'),
       
-      // Regular multiline strings (indentation-agnostic)
+      // Regular multiline strings
+      seq('{', repeat(/[^}]+/), '}'),
+      
+      // Code blocks: {!html:...:}, {!css...}, etc.
       seq(
-        token.immediate('{'),
-        optional($.string_content),
-        token.immediate('}')
+        choice(
+          '{!html:', '{!css:', '{!md:', '{!js:', '{!sql:', '{!sh:', '{!xml:', '{!json:',
+          '{!html', '{!css', '{!md', '{!js', '{!sql', '{!sh', '{!xml', '{!json'
+        ),
+        repeat(/[^:}]+|:[^}]|[^}]/),
+        choice(':}', '}')
       ),
       
-      // Embedded code blocks
-      $.code_block,
-      
-      // Smart strings (ending with newline) - single guillemet
+      // Smart strings
       seq('«', /[^\n]*/),
       
       // Regex strings
-      seq('{/', repeat(choice(/[^\/]/, /\\\//)), '/}'),
+      seq('{/', repeat(/[^\/]|\\./), '/}'),
       
-      // String blocks (three or more dashes)
-      seq(/-{3,}/, repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-    ),
-
-    // String content for multiline strings (helps with nesting)
-    string_content: $ => repeat1(choice(
-      /[^{}]/,
-      seq('{', $.string_content, '}')
-    )),
-
-    // Code blocks with embedded languages
-    code_block: $ => choice(
-      // With colons: {!lang:...:}
-      seq('{!css:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!html:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!md:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!js:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!sql:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!sh:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!xml:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      seq('{!json:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
-      // Without colons: {!lang...}
-      seq('{!css', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!html', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!md', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!js', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!sql', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!sh', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!xml', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
-      seq('{!json', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      // String blocks
+      seq(/-{3,}/, repeat(/[^}]+/), '}'),
     ),
 
     // Characters: `c`
-    char: $ => /`.`/,
+    char: $ => /`./,
 
     // Booleans
     boolean: $ => choice('true', 'false', 'maybe'),
@@ -273,88 +225,17 @@ module.exports = grammar({
     // Null
     null: $ => 'null',
 
-    // Built-in functions and predicates (from the TextMate grammar)
-    builtin: $ => choice(
-      // Predicates (ending with ?)
-      token(choice(
-        'absolute?', 'acceleration?', 'action?', 'all?', 'and?', 'angle?', 'angularVelocity?',
-        'any?', 'area?', 'areaDensity?', 'ascii?', 'attr?', 'attribute?', 'attributeLabel?',
-        'between?', 'binary?', 'block?', 'bytecode?', 'capacitance?', 'char?', 'charge?',
-        'color?', 'complex?', 'conductance?', 'conforms?', 'contains?', 'currency?', 'current?',
-        'currentDensity?', 'database?', 'dataTransferRate?', 'date?', 'defined?', 'density?',
-        'dictionary?', 'directory?', 'disjoint?', 'elastance?', 'electricField?', 'electricityPrice?',
-        'empty?', 'energy?', 'entropy?', 'equal?', 'error?', 'errorKind?', 'even?', 'every?',
-        'exists?', 'false?', 'file?', 'floating?', 'force?', 'frequency?', 'friday?', 'function?',
-        'future?', 'greater?', 'greaterOrEqual?', 'heatFlux?', 'hidden?', 'illuminance?', 'in?',
-        'inductance?', 'infinite?', 'information?', 'inline?', 'integer?', 'intersect?', 'is?',
-        'jerk?', 'key?', 'kinematicViscosity?', 'label?', 'leap?', 'length?', 'less?',
-        'lessOrEqual?', 'literal?', 'logical?', 'lower?', 'luminosity?', 'luminousFlux?',
-        'magneticFieldStrength?', 'magneticFlux?', 'magneticFluxDensity?', 'mass?', 'massFlowRate?',
-        'match?', 'method?', 'molarConcentration?', 'moleFlowRate?', 'momentofInertia?', 'momentum?',
-        'monday?', 'nand?', 'negative?', 'nor?', 'not?', 'notEqual?', 'null?', 'numeric?',
-        'object?', 'odd?', 'one?', 'or?', 'past?', 'path?', 'pathLabel?', 'pathLiteral?',
-        'permeability?', 'permittivity?', 'positive?', 'potential?', 'power?', 'prefix?',
-        'pressure?', 'prime?', 'quantity?', 'radiation?', 'radiationExposure?', 'range?',
-        'rational?', 'regex?', 'resistance?', 'resistivity?', 'salary?', 'same?', 'saturday?',
-        'send?', 'set?', 'snap?', 'socket?', 'solidAngle?', 'some?', 'sorted?', 'specificVolume?',
-        'speed?', 'standalone?', 'store?', 'string?', 'subset?', 'substance?', 'suffix?',
-        'sunday?', 'superset?', 'superuser?', 'surfaceTension?', 'symbol?', 'symbolLiteral?',
-        'symlink?', 'temperature?', 'thermalConductivity?', 'thermalInsulance?', 'throws?',
-        'thursday?', 'time?', 'today?', 'true?', 'tuesday?', 'type?', 'unit?', 'unitless?',
-        'upper?', 'version?', 'viscosity?', 'volume?', 'volumetricFlow?', 'waveNumber?',
-        'wednesday?', 'whitespace?', 'word?', 'xnor?', 'xor?', 'zero?'
-      )),
-      
-      // Regular built-in functions
-      token(choice(
-        'abs', 'absolute', 'accept', 'acos', 'acosh', 'acsec', 'acsech', 'actan', 'actanh',
-        'add', 'after', 'alert', 'alias', 'alphabet', 'alphaParticleMass', 'and', 'angle',
-        'angstromStar', 'any', 'append', 'arg', 'args', 'arithmeticError', 'arity', 'arrange',
-        'array', 'asec', 'asech', 'asin', 'asinh', 'assertionError', 'atan', 'atan2', 'atanh',
-        'atomicMass', 'attr', 'attrs', 'average', 'avogadroConstant', 'before', 'benchmark',
-        'blend', 'bohrRadius', 'boltzmannConstant', 'break', 'browse', 'call', 'capitalize',
-        'case', 'ceil', 'chop', 'chunk', 'clamp', 'classicalElectronRadius', 'clear', 'clip',
-        'close', 'cluster', 'coalesce', 'collect', 'color', 'combine', 'compare',
-        'conductanceQuantum', 'config', 'conj', 'connect', 'constructor', 'continue',
-        'conversionError', 'convert', 'copy', 'cos', 'cosh', 'couple', 'crc', 'csec', 'csech',
-        'ctan', 'ctanh', 'cursor', 'darken', 'dec', 'decode', 'decouple', 'define', 'delete',
-        'denominator', 'desaturate', 'deuteronMass', 'deviation', 'dialog', 'dictionary',
-        'difference', 'digest', 'digits', 'discard', 'div', 'divmod', 'do', 'download', 'drop',
-        'dup', 'electronCharge', 'electronMass', 'electronMassEnergy', 'empty', 'encode',
-        'ensure', 'enumerate', 'env', 'epsilon', 'escape', 'execute', 'exit', 'exp', 'export',
-        'express', 'extend', 'extract', 'factorial', 'factors', 'false', 'fdiv', 'filter',
-        'first', 'flatten', 'floor', 'fold', 'function', 'gamma', 'gather', 'gcd', 'get', 'goto',
-        'gravitationalConstant', 'grayscale', 'hartreeEnergy', 'hash', 'helionMass', 'hypot',
-        'if', 'impedanceOfVacuum', 'import', 'in', 'inc', 'indent', 'index', 'indexError',
-        'infinite', 'info', 'input', 'insert', 'inspect', 'intersection', 'inverseConductanceQuantum',
-        'invert', 'is', 'jaro', 'join', 'josephsonConstant', 'keys', 'kurtosis', 'last', 'lcm',
-        'let', 'levenshtein', 'libraryError', 'lighten', 'list', 'listen', 'ln', 'log', 'loop',
-        'lower', 'magneticFluxQuantum', 'mail', 'map', 'match', 'max', 'maximum', 'maybe',
-        'median', 'method', 'methods', 'min', 'minimum', 'mod', 'module', 'molarGasConstant',
-        'move', 'mul', 'muonMass', 'nameError', 'nand', 'neg', 'neutronMass', 'new', 'nor',
-        'normalize', 'not', 'now', 'null', 'numerator', 'open', 'or', 'outdent', 'packageError',
-        'pad', 'palette', 'panic', 'parse', 'path', 'pause', 'permissions', 'permutate', 'pi',
-        'planckConstant', 'planckLength', 'planckMass', 'planckTemperature', 'planckTime', 'pop',
-        'popup', 'pow', 'powerset', 'powmod', 'prepend', 'print', 'prints', 'process', 'product',
-        'property', 'protonMass', 'protonMassEnergy', 'query', 'random', 'range', 'read',
-        'receive', 'reciprocal', 'reducedPlanckConstant', 'relative', 'remove', 'rename',
-        'render', 'repeat', 'replace', 'request', 'return', 'reverse', 'rotate', 'round',
-        'runtimeError', 'rydbergConstant', 'sample', 'saturate', 'scalar', 'script', 'sec',
-        'sech', 'select', 'send', 'serve', 'set', 'shl', 'shr', 'shuffle', 'sin', 'sinh',
-        'size', 'skewness', 'slice', 'sort', 'sortable', 'specify', 'speedOfLight', 'spin',
-        'split', 'sqrt', 'squeeze', 'stack', 'standardGasVolume', 'standardPressure',
-        'standardTemperature', 'store', 'strip', 'sub', 'sum', 'switch', 'symbols', 'symlink',
-        'syntaxError', 'sys', 'systemError', 'take', 'tally', 'tan', 'tanh', 'tau', 'tauMass',
-        'terminal', 'terminate', 'thomsonCrossSection', 'throw', 'timestamp', 'to', 'translate',
-        'tritonMass', 'true', 'truncate', 'try', 'type', 'typeError', 'uiError', 'unclip',
-        'union', 'unique', 'units', 'unless', 'unplug', 'unset', 'unstack', 'until', 'unzip',
-        'upper', 'using', 'vacuumPermeability', 'vacuumPermittivity', 'valueError', 'values',
-        'var', 'variance', 'vmError', 'volume', 'vonKlitzingConstant', 'webview', 'when',
-        'while', 'window', 'with', 'wordwrap', 'write', 'xnor', 'xor', 'zip'
-      ))
-    ),
+    // Built-in functions - using a simplified token pattern
+    // The LSP will handle the full list of 521 functions
+    builtin: $ => token(choice(
+      // Common patterns
+      /[a-z]+\?/,           // predicates: prime?, contains?, etc.
+      /[a-z]+[A-Z][a-zA-Z]*/, // camelCase: className, etc.
+      /[a-z]+/              // simple: print, loop, if, etc.
+    )),
 
-    // Identifiers
-    identifier: $ => /[\w_]+\??/,
+    // Identifiers: can contain letters, numbers, underscores, hyphens and optional ? at end
+    // Examples: myVar, my-var, my_var, contains?, prime?
+    identifier: $ => /[a-zA-Z_][\w-]*\??/,
   }
 });
