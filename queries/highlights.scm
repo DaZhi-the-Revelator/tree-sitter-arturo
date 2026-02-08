@@ -12,8 +12,15 @@
 
 ; Strings and Characters
 (string) @string
+(interpolated_string) @string
+(template_string) @string
 (char) @string.special
 (code_block) @string.special
+
+; String interpolation delimiters
+(interpolation
+  "|" @punctuation.special
+  "|" @punctuation.special)
 
 ; Literals and Types
 (literal) @constant

@@ -198,7 +198,27 @@
         },
         {
           "type": "SYMBOL",
+          "name": "interpolated_string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "template_string"
+        },
+        {
+          "type": "SYMBOL",
           "name": "char"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "color"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "unit"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "version"
         },
         {
           "type": "SYMBOL",
@@ -839,6 +859,23 @@
               }
             ]
           }
+        },
+        {
+          "type": "PREC",
+          "value": 4,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "`"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
+            ]
+          }
         }
       ]
     },
@@ -881,6 +918,150 @@
         }
       ]
     },
+    "color": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "red"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "green"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "blue"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "yellow"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "cyan"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "magenta"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "white"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "black"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "gray"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "grey"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "orange"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "purple"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "pink"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "brown"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "lime"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "navy"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "teal"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "aqua"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "maroon"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "olive"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "silver"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "fuchsia"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[0-9a-fA-F]{6}"
+              }
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[0-9a-fA-F]{3}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "unit": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "`"
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "[a-zA-Z_][a-zA-Z0-9_]*"
+          }
+        }
+      ]
+    },
+    "version": {
+      "type": "PATTERN",
+      "value": "\\d+(\\.\\d+)*(-[a-zA-Z][a-zA-Z0-9]*)?"
+    },
     "number": {
       "type": "TOKEN",
       "content": {
@@ -900,6 +1081,94 @@
           }
         ]
       }
+    },
+    "interpolated_string": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "~\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "interpolation"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[^\"|\\\\]+"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\\\."
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        }
+      ]
+    },
+    "interpolation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "|"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "STRING",
+          "value": "|"
+        }
+      ]
+    },
+    "template_string": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<||"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[^|]"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "|"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[^|]"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "||>"
+        }
+      ]
     },
     "string": {
       "type": "CHOICE",

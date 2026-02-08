@@ -71,7 +71,12 @@ module.exports = grammar({
     _expression: $ => choice(
       $.number,
       $.string,
+      $.interpolated_string,
+      $.template_string,
       $.char,
+      $.color,
+      $.unit,
+      $.version,
       $.boolean,
       $.null,
       $.builtin,
@@ -129,6 +134,7 @@ module.exports = grammar({
       prec(4, seq('#', $._expression)),
       prec(4, seq('$', $._expression)),
       prec(4, seq('?', $._expression)),
+      prec(4, seq('`', $._expression)),  // Unit prefix
     ),
 
     // Literals: 'word
@@ -140,6 +146,29 @@ module.exports = grammar({
     // Attributes: .attribute
     attribute: $ => seq('.', /[\w_]+\??:?/),
 
+    // Colors: #red or #0077BF
+    color: $ => seq(
+      '#',
+      choice(
+        // Named colors
+        token.immediate(choice(
+          'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black',
+          'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'lime', 'navy',
+          'teal', 'aqua', 'maroon', 'olive', 'silver', 'fuchsia'
+        )),
+        // Hex colors (6 digits)
+        token.immediate(/[0-9a-fA-F]{6}/),
+        // Hex colors (3 digits)
+        token.immediate(/[0-9a-fA-F]{3}/)
+      )
+    ),
+
+    // Units: `m, `kg, etc.
+    unit: $ => seq('`', token.immediate(/[a-zA-Z_][a-zA-Z0-9_]*/)),
+
+    // Version literals: 1.2.3 or 1.2.3-beta
+    version: $ => /\d+(\.\d+)*(-[a-zA-Z][a-zA-Z0-9]*)?/,
+
     // Numbers (integers and floats)
     number: $ => {
       const decimal = /[0-9]+/;
@@ -147,6 +176,34 @@ module.exports = grammar({
       const scientific = /[0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+/;
       return token(choice(scientific, float, decimal));
     },
+
+    // Interpolated strings: ~"text |var| more text"
+    interpolated_string: $ => seq(
+      '~"',
+      repeat(choice(
+        $.interpolation,
+        /[^"|\\]+/,
+        /\\./
+      )),
+      '"'
+    ),
+
+    // String interpolation: |variable|
+    interpolation: $ => seq(
+      '|',
+      $.identifier,
+      '|'
+    ),
+
+    // Template strings with delimiters: <|| ... ||>
+    template_string: $ => seq(
+      '<||',
+      repeat(choice(
+        /[^|]/,
+        seq('|', /[^|]/)
+      )),
+      '||>'
+    ),
 
     // Strings: "..." or {...} or {:...:} or ««...»»
     string: $ => choice(
