@@ -510,6 +510,25 @@
         {
           "type": "code_block",
           "named": true
+        },
+        {
+          "type": "string_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "string_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "string_content",
+          "named": true
         }
       ]
     }
@@ -803,6 +822,14 @@
     "named": false
   },
   {
+    "type": "{!json",
+    "named": false
+  },
+  {
+    "type": "{!json:",
+    "named": false
+  },
+  {
     "type": "{!md",
     "named": false
   },
@@ -824,6 +851,14 @@
   },
   {
     "type": "{!sql:",
+    "named": false
+  },
+  {
+    "type": "{!xml",
+    "named": false
+  },
+  {
+    "type": "{!xml:",
     "named": false
   },
   {
@@ -852,6 +887,10 @@
   },
   {
     "type": "««",
+    "named": false
+  },
+  {
+    "type": "»",
     "named": false
   },
   {

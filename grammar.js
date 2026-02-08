@@ -153,42 +153,58 @@ module.exports = grammar({
       // Regular strings with escape sequences
       seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
       
-      // Safe strings
-      seq('««', repeat(/[^»]/), '»»'),
+      // Safe strings (double guillemets)
+      seq('««', repeat(choice(/[^»]/, seq('»', /[^»]/))), '»»'),
       
-      // Curly strings (verbatim)
-      seq('{:', repeat(/[^:]/), ':}'),
+      // Verbatim multiline strings (indentation-preserved)
+      seq('{:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
       
-      // Curly strings (normal) - often used as "multi-line comments"
-      seq('{', repeat(choice(/[^{}\\]/, /\\./)), '}'),
+      // Regular multiline strings (indentation-agnostic)
+      seq(
+        token.immediate('{'),
+        optional($.string_content),
+        token.immediate('}')
+      ),
       
       // Embedded code blocks
       $.code_block,
       
-      // Smart strings (ending with newline)
+      // Smart strings (ending with newline) - single guillemet
       seq('«', /[^\n]*/),
       
       // Regex strings
-      seq('{/', repeat(/[^\/]/), '/}'),
+      seq('{/', repeat(choice(/[^\/]/, /\\\//)), '/}'),
       
-      // String blocks
-      seq(/-{3,}/, repeat(/[^}]/), '}'),
+      // String blocks (three or more dashes)
+      seq(/-{3,}/, repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
     ),
+
+    // String content for multiline strings (helps with nesting)
+    string_content: $ => repeat1(choice(
+      /[^{}]/,
+      seq('{', $.string_content, '}')
+    )),
 
     // Code blocks with embedded languages
     code_block: $ => choice(
-      seq('{!css:', repeat(/[^:]/), ':}'),
-      seq('{!html:', repeat(/[^:]/), ':}'),
-      seq('{!md:', repeat(/[^:]/), ':}'),
-      seq('{!js:', repeat(/[^:]/), ':}'),
-      seq('{!sql:', repeat(/[^:]/), ':}'),
-      seq('{!sh:', repeat(/[^:]/), ':}'),
-      seq('{!css', repeat(/[^}]/), '}'),
-      seq('{!html', repeat(/[^}]/), '}'),
-      seq('{!md', repeat(/[^}]/), '}'),
-      seq('{!js', repeat(/[^}]/), '}'),
-      seq('{!sql', repeat(/[^}]/), '}'),
-      seq('{!sh', repeat(/[^}]/), '}'),
+      // With colons: {!lang:...:}
+      seq('{!css:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!html:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!md:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!js:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!sql:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!sh:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!xml:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      seq('{!json:', repeat(choice(/[^:]/, seq(':', /[^}]/))), ':}'),
+      // Without colons: {!lang...}
+      seq('{!css', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!html', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!md', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!js', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!sql', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!sh', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!xml', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
+      seq('{!json', repeat(choice(/[^}]/, seq('}', /[^}]/))), '}'),
     ),
 
     // Characters: `c`
