@@ -3,7 +3,7 @@
  * @author Arturo Community
  * @license MIT
  * 
- * OPTIMIZED VERSION - Simplified to reduce memory usage during compilation
+ * HIGHLY OPTIMIZED VERSION - Aggressively simplified to reduce parser size for WASM compilation
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
@@ -75,7 +75,6 @@ module.exports = grammar({
       $.number,
       $.string,
       $.interpolated_string,
-      $.template_string,
       $.char,
       $.color,
       $.unit,
@@ -93,32 +92,26 @@ module.exports = grammar({
       $.unary_expression,
     ),
 
-    // Binary expressions (simplified to reduce complexity)
-    binary_expression: $ => {
-      const ops = [
-        ['+', 1], ['-', 1], ['*', 2], ['/', 2], ['%', 2], ['^', 3],
-        ['=', 0], ['<', 0], ['>', 0], ['<=>', 0],
-        ['&', 0], ['|', 0],
-        ['..', 0], ['...', 0],
-        ['->', 0], ['=>', 0], ['==>', 0], ['<==>', 0], ['-->', 0],
-        ['<-->', 0], ['<->', 0], ['::', 0],
-      ];
-      return choice(...ops.map(([op, precedence]) =>
-        prec.right(precedence, seq($._expression, op, $._expression))
-      ));
-    },
+    // Unary expressions - bumped to 5
+    unary_expression: $ => prec(5, choice(
+      seq('!', $._expression),
+      seq('!!', $._expression),
+      seq('~', $._expression),
+      seq('\\', $._expression),
+      seq('@', $._expression),
+      seq('#', $._expression),
+      seq('$', $._expression),
+      seq('?', $._expression),
+      seq('`', $._expression),
+    )),
 
-    // Unary expressions
-    unary_expression: $ => choice(
-      prec(4, seq('!', $._expression)),
-      prec(4, seq('!!', $._expression)),
-      prec(4, seq('~', $._expression)),
-      prec(4, seq('\\', $._expression)),
-      prec(4, seq('@', $._expression)),
-      prec(4, seq('#', $._expression)),
-      prec(4, seq('$', $._expression)),
-      prec(4, seq('?', $._expression)),
-      prec(4, seq('`', $._expression)),
+    // Binary expressions - highest is 4
+    binary_expression: $ => choice(
+      prec.right(4, seq($._expression, '^', $._expression)),
+      prec.left(3, seq($._expression, choice('*', '/', '%'), $._expression)),
+      prec.left(2, seq($._expression, choice('+', '-'), $._expression)),
+      prec.left(1, seq($._expression, choice('=', '<', '>', '&', '|'), $._expression)),
+      prec.left(1, seq($._expression, choice('..', '...', '->', '=>', '::'), $._expression)),
     ),
 
     // Literals: 'word or 'word?
@@ -130,17 +123,16 @@ module.exports = grammar({
     // Attributes: .attribute or .attribute?
     attribute: $ => seq('.', /[a-zA-Z_][\w-]*\??:?/),
 
-    // Colors: #red or #0077BF or #ABC
+    // Colors: #red or #0077BF or #ABC (simplified)
     color: $ => seq(
       '#',
       token.immediate(choice(
         // Hex colors
         /[0-9a-fA-F]{6}/,
         /[0-9a-fA-F]{3}/,
-        // Named colors (simplified list)
+        // Common named colors (reduced list)
         'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black',
-        'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'lime', 'navy',
-        'teal', 'aqua', 'maroon', 'olive', 'silver', 'fuchsia'
+        'gray', 'orange', 'purple', 'pink'
       ))
     ),
 
@@ -175,45 +167,18 @@ module.exports = grammar({
       '|'
     ),
 
-    // Template strings: <|| ... ||>
-    template_string: $ => seq(
-      '<||',
-      repeat(/[^|]+|\|[^|]/),
-      '||>'
-    ),
-
-    // Strings: "...", {...}, {:...:}, ««...»», etc.
+    // Strings: "...", {...}, {:...:}, etc. (simplified)
     string: $ => choice(
       // Regular double-quoted strings
       seq('"', repeat(choice(/[^"\\]+/, /\\./)), '"'),
       
-      // Safe strings (double guillemets)
-      seq('««', repeat(/[^»]+/), '»»'),
-      
-      // Verbatim multiline strings
-      seq('{:', repeat(/[^:]+|:[^}]/), ':}'),
-      
-      // Regular multiline strings
+      // Multiline strings with curly braces
       seq('{', repeat(/[^}]+/), '}'),
+      seq('{:', repeat(/[^:}]+/), ':}'),
       
-      // Code blocks: {!html:...:}, {!css...}, etc.
-      seq(
-        choice(
-          '{!html:', '{!css:', '{!md:', '{!js:', '{!sql:', '{!sh:', '{!xml:', '{!json:',
-          '{!html', '{!css', '{!md', '{!js', '{!sql', '{!sh', '{!xml', '{!json'
-        ),
-        repeat(/[^:}]+|:[^}]|[^}]/),
-        choice(':}', '}')
-      ),
-      
-      // Smart strings
+      // Guillemet strings
+      seq('««', repeat(/[^»]+/), '»»'),
       seq('«', /[^\n]*/),
-      
-      // Regex strings
-      seq('{/', repeat(/[^\/]|\\./), '/}'),
-      
-      // String blocks
-      seq(/-{3,}/, repeat(/[^}]+/), '}'),
     ),
 
     // Characters: `c`

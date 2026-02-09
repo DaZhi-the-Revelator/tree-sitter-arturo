@@ -74,10 +74,6 @@
             "named": true
           },
           {
-            "type": "template_string",
-            "named": true
-          },
-          {
             "type": "type_annotation",
             "named": true
           },
@@ -164,10 +160,6 @@
         },
         {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "template_string",
           "named": true
         },
         {
@@ -267,10 +259,6 @@
         },
         {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "template_string",
           "named": true
         },
         {
@@ -381,10 +369,6 @@
             "named": true
           },
           {
-            "type": "template_string",
-            "named": true
-          },
-          {
             "type": "type_annotation",
             "named": true
           },
@@ -466,10 +450,6 @@
           },
           {
             "type": "string",
-            "named": true
-          },
-          {
-            "type": "template_string",
             "named": true
           },
           {
@@ -617,10 +597,6 @@
           "named": true
         },
         {
-          "type": "template_string",
-          "named": true
-        },
-        {
           "type": "type_annotation",
           "named": true
         },
@@ -641,11 +617,6 @@
   },
   {
     "type": "string",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "template_string",
     "named": true,
     "fields": {}
   },
@@ -716,10 +687,6 @@
         },
         {
           "type": "string",
-          "named": true
-        },
-        {
-          "type": "template_string",
           "named": true
         },
         {
@@ -795,10 +762,6 @@
     "named": false
   },
   {
-    "type": "-->",
-    "named": false
-  },
-  {
     "type": "->",
     "named": false
   },
@@ -819,10 +782,6 @@
     "named": false
   },
   {
-    "type": "/}",
-    "named": false
-  },
-  {
     "type": ":",
     "named": false
   },
@@ -839,31 +798,7 @@
     "named": false
   },
   {
-    "type": "<-->",
-    "named": false
-  },
-  {
-    "type": "<->",
-    "named": false
-  },
-  {
-    "type": "<==>",
-    "named": false
-  },
-  {
-    "type": "<=>",
-    "named": false
-  },
-  {
-    "type": "<||",
-    "named": false
-  },
-  {
     "type": "=",
-    "named": false
-  },
-  {
-    "type": "==>",
     "named": false
   },
   {
@@ -951,83 +886,11 @@
     "named": false
   },
   {
-    "type": "{!css",
-    "named": false
-  },
-  {
-    "type": "{!css:",
-    "named": false
-  },
-  {
-    "type": "{!html",
-    "named": false
-  },
-  {
-    "type": "{!html:",
-    "named": false
-  },
-  {
-    "type": "{!js",
-    "named": false
-  },
-  {
-    "type": "{!js:",
-    "named": false
-  },
-  {
-    "type": "{!json",
-    "named": false
-  },
-  {
-    "type": "{!json:",
-    "named": false
-  },
-  {
-    "type": "{!md",
-    "named": false
-  },
-  {
-    "type": "{!md:",
-    "named": false
-  },
-  {
-    "type": "{!sh",
-    "named": false
-  },
-  {
-    "type": "{!sh:",
-    "named": false
-  },
-  {
-    "type": "{!sql",
-    "named": false
-  },
-  {
-    "type": "{!sql:",
-    "named": false
-  },
-  {
-    "type": "{!xml",
-    "named": false
-  },
-  {
-    "type": "{!xml:",
-    "named": false
-  },
-  {
-    "type": "{/",
-    "named": false
-  },
-  {
     "type": "{:",
     "named": false
   },
   {
     "type": "|",
-    "named": false
-  },
-  {
-    "type": "||>",
     "named": false
   },
   {
