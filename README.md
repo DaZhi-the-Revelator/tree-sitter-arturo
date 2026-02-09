@@ -23,7 +23,7 @@ This grammar provides syntax parsing for Arturo, enabling features like syntax h
 ```json
 {
   "dependencies": {
-    "tree-sitter-arturo": "github:YOUR_USERNAME/tree-sitter-arturo"
+    "tree-sitter-arturo": "github:DaZhi-the-Revelator/tree-sitter-arturo"
   }
 }
 ```
@@ -31,7 +31,7 @@ This grammar provides syntax parsing for Arturo, enabling features like syntax h
 ### For development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/tree-sitter-arturo
+git clone https://github.com/DaZhi-the-Revelator/tree-sitter-arturo
 cd tree-sitter-arturo
 npm install
 npm run generate
@@ -61,7 +61,7 @@ console.log(tree.rootNode.toString());
 
 ### With Zed Editor
 
-This grammar is used by the [zed-arturo](https://github.com/YOUR_USERNAME/zed-arturo) extension.
+This grammar is used by the [zed-arturo](https://github.com/DaZhi-the-Revelator/zed-arturo) extension.
 
 ## Arturo Language Syntax
 
@@ -132,7 +132,6 @@ loop numbers 'x [
   - Curly verbatim: `{:string:}`
   - Curly normal: `{string}`
   - Smart: `«string`
-  - Regex: `{/pattern/}`
 - **Characters**: `` `c` ``
 - **Booleans**: `true`, `false`, `maybe`
 - **Null**: `null`
@@ -169,17 +168,21 @@ All Arturo expression types are supported:
 
 ### Operators
 
+**Binary Operators** (defined in grammar.js):
+
 **Arithmetic**: `+`, `-`, `*`, `/`, `%`, `^`
 
-**Comparison**: `=`, `<`, `>`, `<=>`
+**Comparison**: `=`, `<`, `>`
 
 **Logical**: `&`, `|`
 
 **Range**: `..`, `...`
 
-**Special**: `->`, `=>`, `==>`, `<===>`, `-->`, `<-->`, `<->`, `::`
+**Special**: `->`, `=>`, `::`
 
-**Unary**: `!`, `!!`, `~`, `\`, `@`, `#`, `$`, `?`
+**Unary Operators**: `!`, `!!`, `~`, `\`, `@`, `#`, `$`, `?`, `` ` ``
+
+**Note**: Only these operators are actually defined in the grammar. Some operators that may exist in the Arturo language itself (like `==>`, `<===>`, etc.) are handled at the runtime/parser level, not in the syntax grammar.
 
 ## Testing
 
@@ -219,7 +222,7 @@ Highlighting queries are in `queries/highlights.scm`:
 
 ### Language Server
 
-See [zed-arturo](https://github.com/YOUR_USERNAME/zed-arturo) for the full LSP implementation.
+See [zed-arturo](https://github.com/DaZhi-the-Revelator/zed-arturo) for the full LSP implementation.
 
 ## Development
 
@@ -255,6 +258,7 @@ tree-sitter-arturo/
 - **Strings vs Comments**: `{...}` blocks are strings, not comments
 - **Bracket Matching**: Blocks can span multiple lines
 - **Built-ins**: All 521+ functions are recognized in the grammar
+- **Operators**: Only operators listed above are in the grammar; others may be handled by Arturo's runtime
 
 ## Contributing
 
@@ -280,7 +284,11 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ## Changelog
 
-### v1.0.0 (Current)
+### v1.0.1 (Current)
+- 🐛 Fixed operator documentation to match actual grammar.js definitions
+- 📝 Clarified that only listed operators are in the grammar
+
+### v1.0.0
 - ✅ Complete Arturo syntax support
 - ✅ Corrected comment handling (single-line only)
 - ✅ Multi-line block support

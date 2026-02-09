@@ -13,9 +13,8 @@
 ; Strings and Characters
 (string) @string
 (interpolated_string) @string
-(template_string) @string
 (char) @string.special
-(code_block) @string.special
+(block) @string.special
 
 ; String interpolation delimiters
 (interpolation
@@ -50,7 +49,7 @@
 (dictionary
   key: (label) @property)
 
-; Operators - only those that exist in the grammar
+; Operators - only those that actually exist in the grammar
 [
   "+"
   "-"
@@ -75,13 +74,7 @@
   "..."
   "->"
   "=>"
-  "==>"
-  "<==>"
-  "-->"
-  "<-->"
-  "<->"
   "::"
-  "<=>"
 ] @operator
 
 ; Delimiters - brackets and braces
@@ -101,4 +94,5 @@
 ; Special symbols
 [
   "'"
+  "`"
 ] @punctuation.special
