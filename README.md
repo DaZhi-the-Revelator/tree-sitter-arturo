@@ -68,6 +68,7 @@ This grammar is used by the [zed-arturo](https://github.com/DaZhi-the-Revelator/
 ### Comments
 
 **Single-line comments only**:
+
 ```arturo
 ; This is a comment
 ```
@@ -147,6 +148,7 @@ loop numbers 'x [
 ### Statements
 
 The grammar recognizes these statement types:
+
 - Shebang (`#!/usr/bin/env arturo`)
 - Comments (`;`)
 - Assignments (`name: value`)
@@ -156,6 +158,7 @@ The grammar recognizes these statement types:
 ### Expressions
 
 All Arturo expression types are supported:
+
 - Numbers (integer, float, scientific)
 - Strings (all variants)
 - Characters
@@ -228,7 +231,7 @@ See [zed-arturo](https://github.com/DaZhi-the-Revelator/zed-arturo) for the full
 
 ### Project Structure
 
-```
+```txt
 tree-sitter-arturo/
 ├── grammar.js              # Grammar definition
 ├── src/
@@ -285,10 +288,12 @@ MIT License - see [LICENSE](LICENSE) for details
 ## Changelog
 
 ### v1.0.1 (Current)
+
 - 🐛 Fixed operator documentation to match actual grammar.js definitions
 - 📝 Clarified that only listed operators are in the grammar
 
 ### v1.0.0
+
 - ✅ Complete Arturo syntax support
 - ✅ Corrected comment handling (single-line only)
 - ✅ Multi-line block support
@@ -297,4 +302,5 @@ MIT License - see [LICENSE](LICENSE) for details
 - ✅ Code block embeddings
 
 ### v0.1.0
+
 - Initial grammar implementation
