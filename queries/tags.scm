@@ -1,14 +1,14 @@
 ; Tags query for Arturo language
-; This file defines what tree-sitter nodes should be considered symbols
-; for navigation (outline, breadcrumbs, symbol search)
+; Defines symbols for outline, breadcrumbs, and quick navigation
 
-; Function definitions
-; Pattern: name: function [params] [body] or name: $[params][body]
-(assignment
+; Function assignments (name: function [...] or name: $[...])
+; We need to capture the label and strip the trailing colon
+((assignment
   name: (label) @name
-  value: (block)) @function
+  value: (block)) @definition.function
+ (#strip! @name ":$"))
 
-; All variable/constant assignments
-; Pattern: name: value
-(assignment
-  name: (label) @name) @variable
+; Variable/constant assignments
+((assignment
+  name: (label) @name) @definition.variable
+ (#strip! @name ":$"))
