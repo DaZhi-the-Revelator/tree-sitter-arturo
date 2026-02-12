@@ -1,0 +1,7 @@
+build/
+node_modules/
+target/
+*.log
+*.exp
+*.lib
+*.obj
