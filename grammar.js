@@ -20,6 +20,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.function_call, $._expression],
     [$.label, $.identifier],
+    [$.label, $.function_call, $._expression],
   ],
 
   rules: {

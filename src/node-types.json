@@ -514,7 +514,18 @@
   {
     "type": "label",
     "named": true,
-    "fields": {}
+    "fields": {
+      "identifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "literal",

@@ -952,6 +952,11 @@
     [
       "label",
       "identifier"
+    ],
+    [
+      "label",
+      "function_call",
+      "_expression"
     ]
   ],
   "precedences": [],
