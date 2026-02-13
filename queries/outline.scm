@@ -4,10 +4,10 @@
 ; Function definitions
 (assignment
   name: (label
-    identifier: (_) @name)
+    identifier: (identifier) @name)
   value: (block))
 
 ; Variable/constant definitions  
 (assignment
   name: (label
-    identifier: (_) @name))
+    identifier: (identifier) @name))

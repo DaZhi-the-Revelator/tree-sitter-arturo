@@ -49,7 +49,7 @@ module.exports = grammar({
     // Supports ? at end: name?: value
     // Changed to separate identifier and colon for better tree-sitter queries
     label: $ => seq(
-      field('identifier', /[a-zA-Z_][\w-]*\??/),
+      field('identifier', $.identifier),
       ':'
     ),
 
