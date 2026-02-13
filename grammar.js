@@ -19,6 +19,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.function_call, $._expression],
+    [$.label, $.identifier],
   ],
 
   rules: {
@@ -46,7 +47,11 @@ module.exports = grammar({
 
     // Labels: identifier followed by colon (for assignment or dictionary keys)
     // Supports ? at end: name?: value
-    label: $ => /[a-zA-Z_][\w-]*\??:/,
+    // Changed to separate identifier and colon for better tree-sitter queries
+    label: $ => seq(
+      field('identifier', /[a-zA-Z_][\w-]*\??/),
+      ':'
+    ),
 
     // Blocks: [...]
     block: $ => seq(

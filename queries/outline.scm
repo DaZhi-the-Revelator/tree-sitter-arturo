@@ -3,9 +3,11 @@
 
 ; Function definitions
 (assignment
-  name: (label) @name
+  name: (label
+    identifier: (_) @name)
   value: (block))
 
 ; Variable/constant definitions  
 (assignment
-  name: (label) @name)
+  name: (label
+    identifier: (_) @name))

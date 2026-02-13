@@ -29,7 +29,9 @@
 (attribute) @property
 
 ; Labels (for assignments and dictionary keys)
-(label) @label
+(label
+  identifier: (_) @label)
+":" @punctuation.delimiter
 
 ; Identifiers
 (identifier) @variable
@@ -43,11 +45,13 @@
 
 ; Assignment targets
 (assignment
-  name: (label) @variable.parameter)
+  name: (label
+    identifier: (_) @variable.parameter))
 
 ; Dictionary keys
 (dictionary
-  key: (label) @property)
+  key: (label
+    identifier: (_) @property))
 
 ; Operators - only those that actually exist in the grammar
 [

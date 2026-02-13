@@ -512,6 +512,11 @@
     "fields": {}
   },
   {
+    "type": "label",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "literal",
     "named": true,
     "fields": {}
@@ -852,10 +857,6 @@
   {
     "type": "false",
     "named": false
-  },
-  {
-    "type": "label",
-    "named": true
   },
   {
     "type": "maybe",

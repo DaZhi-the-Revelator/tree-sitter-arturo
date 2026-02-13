@@ -67,8 +67,21 @@
       }
     },
     "label": {
-      "type": "PATTERN",
-      "value": "[a-zA-Z_][\\w-]*\\??:"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "PATTERN",
+            "value": "[a-zA-Z_][\\w-]*\\??"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        }
+      ]
     },
     "block": {
       "type": "SEQ",
@@ -935,6 +948,10 @@
     [
       "function_call",
       "_expression"
+    ],
+    [
+      "label",
+      "identifier"
     ]
   ],
   "precedences": [],
