@@ -289,12 +289,9 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ### v2.0-dev (In Development)
 
-- 🐛 **FIXED: Outline Icons** - Icons now display correctly in outline view and breadcrumbs
-  - Changed from generic `@item` captures to explicit `@definition.function` and `@definition.constant`
-  - Added `@context` captures to function blocks (assignments with block values)
-  - Enables Zed to automatically assign appropriate icons based on capture names
-  - Functions now display with function icons, variables with constant icons
-  - Works with Zed's automatic icon inference system
+- 🐛 **FIXED: Injection Query Error** - Removed invalid code_block references
+  - Cleared injections.scm as grammar doesn't define code_block nodes
+  - Arturo uses string literals for embedded code, not dedicated grammar nodes
 
 ### v1.0.1
 
