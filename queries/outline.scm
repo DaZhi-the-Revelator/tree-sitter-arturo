@@ -2,14 +2,14 @@
 ; Defines symbols for the outline panel, breadcrumbs, and symbol search
 
 ; Function definitions (assignments where value is a block)
-; These are marked with @context to include the block indicator in the outline
+; The @context capture on the block value helps Zed identify this as a function
 (assignment
   name: (label
     identifier: (identifier) @name)
-  value: (block) @context) @item
+  value: (block) @context) @definition.function
 
-; Variable/constant definitions (non-block values)
+; Variable/constant definitions (all other assignments)
 (assignment
   name: (label
     identifier: (identifier) @name)
-  value: (_)) @item
+  value: (_)) @definition.constant

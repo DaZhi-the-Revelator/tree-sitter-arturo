@@ -289,10 +289,12 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ### v2.0-dev (In Development)
 
-- 🔧 **ENHANCEMENT: Outline Query** - Improved outline.scm for better editor integration
-  - Added `@context` captures to function definitions (assignments with block values)
-  - Helps editors like Zed differentiate between functions and variables
-  - Enables automatic icon assignment in outline views and breadcrumbs
+- 🐛 **FIXED: Outline Icons** - Icons now display correctly in outline view and breadcrumbs
+  - Changed from generic `@item` captures to explicit `@definition.function` and `@definition.constant`
+  - Added `@context` captures to function blocks (assignments with block values)
+  - Enables Zed to automatically assign appropriate icons based on capture names
+  - Functions now display with function icons, variables with constant icons
+  - Works with Zed's automatic icon inference system
 
 ### v1.0.1
 
