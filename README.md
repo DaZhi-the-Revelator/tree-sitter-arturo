@@ -287,7 +287,14 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ## Changelog
 
-### v1.0.1 (Current)
+### v2.0-dev (In Development)
+
+- 🔧 **ENHANCEMENT: Outline Query** - Improved outline.scm for better editor integration
+  - Added `@context` captures to function definitions (assignments with block values)
+  - Helps editors like Zed differentiate between functions and variables
+  - Enables automatic icon assignment in outline views and breadcrumbs
+
+### v1.0.1
 
 - 🐛 Fixed operator documentation to match actual grammar.js definitions
 - 📝 Clarified that only listed operators are in the grammar
