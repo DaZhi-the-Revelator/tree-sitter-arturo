@@ -1,15 +1,15 @@
 ; Outline query for Arturo language
-; Defines symbols for the outline panel, breadcrumbs, and symbol search
+; Provides symbols for outline view, breadcrumbs, and symbol search
 
-; Function definitions (assignments where value is a block)
-; The @context capture on the block value helps Zed identify this as a function
+; Function definitions - assignments with block values
+; Use @definition.function for proper icon inference
 (assignment
   name: (label
     identifier: (identifier) @name)
-  value: (block) @context) @definition.function
+  value: (block)) @definition.function
 
-; Variable/constant definitions (all other assignments)
+; Variable/constant definitions - all other assignments
+; Use @definition.constant for proper icon inference
 (assignment
   name: (label
-    identifier: (identifier) @name)
-  value: (_)) @definition.constant
+    identifier: (identifier) @name)) @definition.constant
