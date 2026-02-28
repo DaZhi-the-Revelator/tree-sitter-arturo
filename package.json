@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-arturo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Arturo grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/DaZhi-the-Revelator/tree-sitter-arturo.git"
   },
-  "author": "Arturo Community",
+  "author": "DaZhi-the-Revelator",
   "license": "MIT",
   "dependencies": {
     "node-addon-api": "^7.1.0",

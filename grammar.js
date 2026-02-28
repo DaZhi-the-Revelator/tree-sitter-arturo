@@ -1,6 +1,6 @@
 /**
  * @file Tree-sitter grammar for Arturo programming language
- * @author Arturo Community
+ * @author DaZhi-the-Revelator
  * @license MIT
  * 
  * HIGHLY OPTIMIZED VERSION - Aggressively simplified to reduce parser size for WASM compilation

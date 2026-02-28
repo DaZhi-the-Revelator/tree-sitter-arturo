@@ -28,36 +28,7 @@ This grammar provides syntax parsing for Arturo, enabling features like syntax h
 }
 ```
 
-### For development
-
-```bash
-git clone https://github.com/DaZhi-the-Revelator/tree-sitter-arturo
-cd tree-sitter-arturo
-npm install
-npm run generate
-npm test
-```
-
 ## Usage
-
-### With Node.js
-
-```javascript
-const Parser = require('tree-sitter');
-const Arturo = require('tree-sitter-arturo');
-
-const parser = new Parser();
-parser.setLanguage(Arturo);
-
-const sourceCode = `
-; This is a comment
-name: "Arturo"
-print name
-`;
-
-const tree = parser.parse(sourceCode);
-console.log(tree.rootNode.toString());
-```
 
 ### With Zed Editor
 
@@ -187,28 +158,6 @@ All Arturo expression types are supported:
 
 **Note**: Only these operators are actually defined in the grammar. Some operators that may exist in the Arturo language itself (like `==>`, `<===>`, etc.) are handled at the runtime/parser level, not in the syntax grammar.
 
-## Testing
-
-Tests are in `test/corpus/basics.txt`:
-
-```bash
-npm test
-```
-
-## Building
-
-Generate the parser from grammar.js:
-
-```bash
-npm run generate
-```
-
-Build the native module:
-
-```bash
-npm run build
-```
-
 ## Integration
 
 ### Syntax Highlighting
@@ -228,32 +177,6 @@ Highlighting queries are in `queries/highlights.scm`:
 See [zed-arturo](https://github.com/DaZhi-the-Revelator/zed-arturo) for the full LSP implementation.
 
 ## Development
-
-### Project Structure
-
-```txt
-tree-sitter-arturo/
-├── grammar.js              # Grammar definition
-├── src/
-│   ├── parser.c           # Generated parser (don't edit)
-│   ├── grammar.json       # Generated grammar data
-│   └── node-types.json    # Generated node types
-├── queries/
-│   └── highlights.scm     # Syntax highlighting queries
-├── test/
-│   └── corpus/
-│       └── basics.txt     # Test cases
-└── bindings/              # Language bindings
-    ├── node/
-    └── rust/
-```
-
-### Making Changes
-
-1. Edit `grammar.js`
-2. Run `npm run generate` to regenerate the parser
-3. Run `npm test` to verify tests pass
-4. Commit changes
 
 ### Important Notes
 
@@ -284,29 +207,3 @@ Contributions welcome! Please:
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details
-
-## Changelog
-
-### v2.0-dev (In Development)
-
-- 🐛 **FIXED: Injection Query Error** - Removed invalid code_block references
-  - Cleared injections.scm as grammar doesn't define code_block nodes
-  - Arturo uses string literals for embedded code, not dedicated grammar nodes
-
-### v1.0.1
-
-- 🐛 Fixed operator documentation to match actual grammar.js definitions
-- 📝 Clarified that only listed operators are in the grammar
-
-### v1.0.0
-
-- ✅ Complete Arturo syntax support
-- ✅ Corrected comment handling (single-line only)
-- ✅ Multi-line block support
-- ✅ All built-in functions recognized
-- ✅ String literal variations
-- ✅ Code block embeddings
-
-### v0.1.0
-
-- Initial grammar implementation
